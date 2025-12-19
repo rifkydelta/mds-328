@@ -24,50 +24,78 @@
   </div>
 
   <main class="app">
-
     <section class="controls">
-      <label>
-        Gambar Produk
-        <input type="file" id="productInput" accept="image/*">
-      </label>
+      <!-- ASET -->
+      <div class="control-group">
+        <h3>Aset Visual</h3>
 
-      <label>
-        Ukuran Post
-        <select id="postSize">
+        <label>
+          Gambar Produk
+          <input type="file" id="productInput" accept="image/*">
+        </label>
+
+        <label>
+          Logo Brand
+          <select id="logoSelect">
+            <option value="">-- Pilih Brand --</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- LAYOUT -->
+      <div class="control-group">
+        <h3>Layout Post</h3>
+
+        <label>
+          Ukuran Post
+          <select id="postSize">
             <option value="">-- Pilih Ukuran --</option>
             <option value="4:5">Feed (4:5) 1080×1350</option>
             <option value="9:16">Story (9:16) 1080×1920</option>
-        </select>
-      </label>
+          </select>
+        </label>
+        <label>
+          Tema 
+          <select id="themeSelect">
+            <option value="">Standard</option>
+            <option value="natal">Natal</option>
+          </select>
+        </label>
+      </div>
 
-      <label>
-        Logo Brand
-        <select id="logoSelect">
-            <option value="">-- Pilih Brand --</option>
-        </select>
-      </label>
+      <!-- HARGA -->
+      <div class="control-group">
+        <h3>Informasi Harga</h3>
 
-      <label>
-        Harga Awal
-        <select id="originalType">
-          <option value="custom">Masukkan Harga</option>
-          <option value="special">HARGA SPESIAL</option>
-        </select>
-        <input type="text" id="originalPrice" placeholder="9.000.000">
-      </label>
+        <label>
+          Harga Awal
+          <select id="originalType">
+            <option value="custom">Masukkan Harga</option>
+            <option value="special">HARGA SPESIAL</option>
+          </select>
+          <input type="text" id="originalPrice" placeholder="9.000.000">
+        </label>
 
-      <label>
-        Harga Akhir
-        <input type="text" id="discountPrice" placeholder="7.500.000">
-      </label>
+        <label>
+          Harga Akhir
+          <input type="text" id="discountPrice" placeholder="7.500.000">
+        </label>
+      </div>
 
-      <label>
-        Variasi Ukuran
-        <input type="text" id="sizeVariant" placeholder="S, M, L, XL, XXL">
-      </label>
+      <!-- TEKS TAMBAHAN -->
+      <div class="control-group">
+        <h3>Teks Tambahan</h3>
 
-      
-      <button id="downloadJPG">Unduh Gambar</button>
+        <label>
+          Variasi Ukuran
+          <input type="text" id="sizeVariant" placeholder="S, M, L, XL, XXL">
+        </label>
+      </div>
+
+      <!-- AKSI -->
+      <div class="control-group action-group">
+        <button id="downloadJPG">Unduh Gambar</button>
+      </div>
     </section>
 
     <section class="preview">

@@ -71,7 +71,7 @@ const SIZE_CONFIG = {
   "4:5": {
     width: 1080,
     height: 1350,
-    template: "assets/template.png",
+    template: "template.png",
     // positions are in pixels for this size
     positions: {
       product: { x: 0, y: 0, w: 1080, h: 1350 },
@@ -86,7 +86,7 @@ const SIZE_CONFIG = {
   "9:16": {
     width: 1080,
     height: 1920,
-    template: "assets/template916.png",
+    template: "template916.png",
     // defaults scaled from 4:5 to 9:16 (you can tweak these values)
     positions: {
       product: { x: 0, y: 0, w: 1080, h: 1920 },
@@ -105,6 +105,7 @@ const SIZE_CONFIG = {
 let currentSize = "4:5";
 let canvasWidth = SIZE_CONFIG[currentSize].width;
 let canvasHeight = SIZE_CONFIG[currentSize].height;
+let currentTheme = "standard"; // standard | natal | imlek
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
@@ -513,5 +514,30 @@ fetch("assets/logos.json")
     console.error("Failed to load logos.json", err);
   });
 
+function loadTemplateForSize(sizeKey) {
+  const cfg = SIZE_CONFIG[sizeKey];
+  const root = getTemplateRoot();
+
+  templateImg.src = `${root}/${cfg.template}`;
+  templateImg.onload = () => {
+    state.template = templateImg;
+    draw();
+  };
+}
+
+const themeSelect = document.getElementById("themeSelect");
+
+themeSelect.addEventListener("change", (e) => {
+  currentTheme = e.target.value || "standard";
+
+  // reload template sesuai tema & ukuran aktif
+  loadTemplateForSize(currentSize);
+});
+
+
+function getTemplateRoot() {
+  if (currentTheme === "standard") return "assets";
+  return `assets/theme/${currentTheme}`;
+}
 
 document.getElementById("downloadJPG").onclick = () => download();
