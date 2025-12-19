@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Template Poster Promo [MDS 328]</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="app">
+    <h1>Template Poster Promo [MDS 328]</h1>
+
+    <section class="controls">
+      <label>
+        Gambar Produk
+        <input type="file" id="productInput" accept="image/*">
+      </label>
+
+      <label>
+        Ukuran Post
+        <select id="postSize">
+            <option value="">-- Pilih Ukuran --</option>
+            <option value="4:5">Feed (4:5) 1080×1350</option>
+            <option value="9:16">Story (9:16) 1080×1920</option>
+        </select>
+      </label>
+
+      <label>
+        Logo Brand
+        <select id="logoSelect">
+            <option value="">-- Pilih Brand --</option>
+        </select>
+      </label>
+
+      <label>
+        Harga Awal
+        <input type="text" id="originalPrice" placeholder="9.000.000">
+      </label>
+
+      <label>
+        Harga Akhir
+        <input type="text" id="discountPrice" placeholder="7.500.000">
+      </label>
+      
+      <button id="downloadJPG">Unduh Gambar</button>
+    </section>
+
+    <section class="preview">
+      <canvas id="canvas"></canvas>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
