@@ -11,15 +11,19 @@ body {
 }
 
 .app {
-  max-width: 480px;
+  max-width: 1200px;
   margin: auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-h1 {
+/* Page title sits above the app and is always centered */
+.page-title {
   text-align: center;
   font-size: 1.2rem;
-  margin-bottom: 12px;
+  margin: 16px 0 20px;
 }
 
 .controls {
@@ -64,4 +68,30 @@ canvas {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Desktop layout: controls left, preview on right */
+@media (min-width: 600px) {
+  .app {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .controls {
+    width: 360px;
+    flex: 0 0 360px;
+    margin-right: 16px;
+  }
+
+  .preview {
+    flex: 1 1 auto;
+    margin-top: 0;
+    max-width: 600px; /* limit preview width on large screens */
+  }
+
+  canvas {
+    width: 100%;
+    height: auto;
+    max-width: 6000px; /* reduce the rendered preview size */
+  }
 }
