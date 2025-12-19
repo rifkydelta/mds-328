@@ -64,6 +64,70 @@ button {
   border-radius: 12px;
 }
 
+/* Login overlay styles */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.55);
+  z-index: 9999;
+  /* enable backdrop blur of the page behind the overlay */
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.login-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
+  max-width: calc(100% - 32px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.login-box h2 { margin: 0 0 8px 0; }
+.login-box p { margin: 0 0 12px 0; color: #444; }
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.login-actions { display:flex; justify-content:center }
+.login-actions button {
+  padding: 10px 16px;
+  background: #0B74FF;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.login-hint { margin-top:8px; font-size:0.85rem; color:#777 }
+
+/* Hide overlay when aria-hidden="true" */
+.login-overlay[aria-hidden="true"] { display: none; }
+
+/* stronger blur when explicitly visible (fine-tune px as needed) */
+.login-overlay[aria-hidden="false"] {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* small shake for wrong code */
+.shake { animation: shake .45s ease; }
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
 canvas {
   width: 100%;
   height: auto;

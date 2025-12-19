@@ -11,6 +11,18 @@
 
   <h1 class="page-title">Template Poster Promo [MDS 328]</h1>
 
+  <!-- Login overlay (blocks access until correct code entered) -->
+  <div id="loginOverlay" class="login-overlay" aria-hidden="false">
+    <div class="login-box" role="dialog" aria-labelledby="loginTitle">
+      <h2 id="loginTitle">Masuk</h2>
+      <p>Masukkan kode untuk melanjutkan.</p>
+      <input id="accessCode" type="password" inputmode="numeric" placeholder="Masukkan kode akses" aria-label="Kode akses">
+      <div class="login-actions">
+        <button id="loginBtn">Masuk</button>
+      </div>
+    </div>
+  </div>
+
   <main class="app">
 
     <section class="controls">

@@ -4,6 +4,68 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// ==============================
+// SIMPLE CLIENT AUTH 
+// ==============================
+const loginOverlay = document.getElementById("loginOverlay");
+const accessInput = document.getElementById("accessCode");
+const loginBtn = document.getElementById("loginBtn");
+
+function showLogin() {
+  if (loginOverlay) loginOverlay.setAttribute("aria-hidden", "false");
+  if (accessInput) accessInput.focus();
+}
+
+function hideLogin() {
+  if (loginOverlay) loginOverlay.setAttribute("aria-hidden", "true");
+}
+
+// Lightweight hash (djb2) to avoid storing plaintext code in source
+function djb2(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) + h) + str.charCodeAt(i); /* h * 33 + c */
+    h = h >>> 0; // keep as unsigned 32-bit
+  }
+  return h;
+}
+
+const STORED_HASH = 193434242;
+
+function checkAuth(code) {
+  return djb2(String(code).trim()) === STORED_HASH;
+}
+
+function attemptLogin() {
+  const val = accessInput ? accessInput.value : "";
+  if (checkAuth(val)) {
+    sessionStorage.setItem("authed", "1");
+    hideLogin();
+    // focus first control
+    const first = document.querySelector('.controls input, .controls select, .controls button');
+    if (first) first.focus();
+  } else {
+    // simple feedback
+    if (accessInput) {
+      accessInput.value = "";
+      accessInput.placeholder = "Kode salah";
+      accessInput.classList.add('shake');
+      setTimeout(() => accessInput.classList.remove('shake'), 500);
+      accessInput.focus();
+    }
+  }
+}
+
+if (sessionStorage.getItem("authed") === "1") {
+  hideLogin();
+} else {
+  showLogin();
+}
+
+if (loginBtn) loginBtn.addEventListener('click', attemptLogin);
+if (accessInput) accessInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptLogin(); });
+
+
 // Size configurations for 4:5 (feed) and 9:16 (story)
 const SIZE_CONFIG = {
   "4:5": {
