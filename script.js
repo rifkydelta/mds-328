@@ -131,6 +131,7 @@ const state = {
   productImage: null,
   logoImage: null,
   originalPrice: "",
+  originalPriceSpecial: false,
   discountPrice: ""
 };
 
@@ -221,49 +222,61 @@ function draw() {
   ctx.fillStyle = "#000";
 
   // ==============================
-  // 2. HARGA SEBELUM
+  // 2. HARGA SEBELUM (atau HARGA SPESIAL)
   // ==============================
-  if (state.originalPrice) {
-    // Split into three parts so the number can be bold
-    const textLeft = "dari ";
-    const textNum = formatIDR(state.originalPrice);
-    const textRight = ", jadi";
-
-    // scale font size with canvas scale
-    const scaled = scalePos({ x: 0, y: 0 });
-    const baseFont = 28;
-    const fontSize = Math.max(10, Math.round(baseFont * Math.min(scaled.sx, scaled.sy)));
-    const fontNormal = `300 ${fontSize}px Poppins, sans-serif`;
-    const fontBold = `700 ${fontSize}px Poppins, sans-serif`;
-
-    ctx.save();
-    // measure using left alignment, then draw starting from computed X so whole line stays centered
-    ctx.textAlign = "left";
-    ctx.font = fontNormal;
-    const wLeft = ctx.measureText(textLeft).width;
-    ctx.font = fontBold;
-    const wNum = ctx.measureText(textNum).width;
-    ctx.font = fontNormal;
-    const wRight = ctx.measureText(textRight).width;
-
-    const totalW = wLeft + wNum + wRight;
+  if (state.originalPrice || state.originalPriceSpecial) {
     const positions = getPositions();
     const scaledPos = scalePos(positions.originalPrice);
-    const startX = scaledPos.x - totalW / 2;
 
-    let cursor = startX;
-    ctx.font = fontNormal;
-    ctx.fillStyle = "#fff";
-    ctx.fillText(textLeft, cursor, scaledPos.y);
-    cursor += wLeft;
-    ctx.font = fontBold;
-    ctx.fillStyle = "#fff"; // draw the number in white
-    ctx.fillText(textNum, cursor, scaledPos.y);
-    cursor += wNum;
-    ctx.font = fontNormal;
-    ctx.fillStyle = "#fff";
-    ctx.fillText(textRight, cursor, scaledPos.y);
-    ctx.restore();
+    if (state.originalPriceSpecial) {
+      // Draw single label "HARGA SPESIAL"
+      const scaled = scalePos({ x: 0, y: 0 });
+      const baseFont = 28;
+      const fontSize = Math.max(10, Math.round(baseFont * Math.min(scaled.sx, scaled.sy)));
+      ctx.font = `700 ${fontSize}px Poppins, sans-serif`;
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.fillText("HARGA SPESIAL", scaledPos.x, scaledPos.y);
+    } else {
+      // Split into three parts so the number can be bold
+      const textLeft = "dari ";
+      const textNum = formatIDR(state.originalPrice);
+      const textRight = ", jadi";
+
+      // scale font size with canvas scale
+      const scaled = scalePos({ x: 0, y: 0 });
+      const baseFont = 28;
+      const fontSize = Math.max(10, Math.round(baseFont * Math.min(scaled.sx, scaled.sy)));
+      const fontNormal = `300 ${fontSize}px Poppins, sans-serif`;
+      const fontBold = `700 ${fontSize}px Poppins, sans-serif`;
+
+      ctx.save();
+      // measure using left alignment, then draw starting from computed X so whole line stays centered
+      ctx.textAlign = "left";
+      ctx.font = fontNormal;
+      const wLeft = ctx.measureText(textLeft).width;
+      ctx.font = fontBold;
+      const wNum = ctx.measureText(textNum).width;
+      ctx.font = fontNormal;
+      const wRight = ctx.measureText(textRight).width;
+
+      const totalW = wLeft + wNum + wRight;
+      const startX = scaledPos.x - totalW / 2;
+
+      let cursor = startX;
+      ctx.font = fontNormal;
+      ctx.fillStyle = "#fff";
+      ctx.fillText(textLeft, cursor, scaledPos.y);
+      cursor += wLeft;
+      ctx.font = fontBold;
+      ctx.fillStyle = "#fff"; // draw the number in white
+      ctx.fillText(textNum, cursor, scaledPos.y);
+      cursor += wNum;
+      ctx.font = fontNormal;
+      ctx.fillStyle = "#fff";
+      ctx.fillText(textRight, cursor, scaledPos.y);
+      ctx.restore();
+    }
   }
 
   // ==============================
@@ -322,10 +335,31 @@ document.getElementById("logoSelect").addEventListener("change", (e) => {
 const originalPriceInput = document.getElementById("originalPrice");
 const discountPriceInput = document.getElementById("discountPrice");
 
+const originalTypeSelect = document.getElementById("originalType");
+
 originalPriceInput.addEventListener("input", () => {
+  // if user types, switch to custom mode
+  if (originalTypeSelect) originalTypeSelect.value = 'custom';
+  state.originalPriceSpecial = false;
   state.originalPrice = formatNumberInput(originalPriceInput);
   draw();
 });
+
+if (originalTypeSelect) {
+  originalTypeSelect.addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (v === 'special') {
+      state.originalPriceSpecial = true;
+      state.originalPrice = "";
+      originalPriceInput.value = "";
+      originalPriceInput.setAttribute('disabled', 'disabled');
+    } else {
+      state.originalPriceSpecial = false;
+      originalPriceInput.removeAttribute('disabled');
+    }
+    draw();
+  });
+}
 
 discountPriceInput.addEventListener("input", () => {
   state.discountPrice = formatNumberInput(discountPriceInput);
