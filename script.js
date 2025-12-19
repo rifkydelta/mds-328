@@ -77,7 +77,10 @@ const SIZE_CONFIG = {
       product: { x: 0, y: 0, w: 1080, h: 1350 },
       logo: { x: 600, y: 1090, w: 140, h: 140 },
       originalPrice: { x: 889, y: 1125 },
-      discountPrice: { x: 889, y: 1207 }
+      discountPrice: { x: 889, y: 1207 },
+
+      sizeTitle: { x: 820, y: 1009 },
+      sizeValue: { x: 820, y: 1050 }
     }
   },
   "9:16": {
@@ -89,7 +92,11 @@ const SIZE_CONFIG = {
       product: { x: 0, y: 0, w: 1080, h: 1920 },
       logo: { x: 600, y: 1560, w: 140, h: 140 },
       originalPrice: { x: 889, y: 1595 },
-      discountPrice: { x: 889, y: 1677 }
+      discountPrice: { x: 889, y: 1677 },
+
+      sizeTitle: { x: 200, y: 1500 },
+      sizeValue: { x: 200, y: 1545 }
+
     }
   }
 };
@@ -132,7 +139,8 @@ const state = {
   logoImage: null,
   originalPrice: "",
   originalPriceSpecial: false,
-  discountPrice: ""
+  discountPrice: "",
+  sizeVariant: "" // ⬅️ TAMBAH
 };
 
 // ==============================
@@ -198,6 +206,37 @@ function draw() {
     const p = scalePos(positions.product);
     drawImageCover(ctx, state.productImage, p.x, p.y, p.w, p.h);
   }
+
+  // ==============================
+  // VARIASI UKURAN (CENTER ALIGN)
+  // ==============================
+  if (state.sizeVariant) {
+    const positions = getPositions();
+
+    const titlePos = scalePos(positions.sizeTitle);
+    const valuePos = scalePos(positions.sizeValue);
+
+    const scaled = scalePos({ x: 0, y: 0 });
+
+    // Base font sizes (sesuai permintaan)
+    const baseTitle = 24; // semibold
+    const baseValue = 36; // light
+
+    const titleFont = Math.max(12, Math.round(baseTitle * Math.min(scaled.sx, scaled.sy)));
+    const valueFont = Math.max(14, Math.round(baseValue * Math.min(scaled.sx, scaled.sy)));
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+
+    // Title: "Variasi ukuran"
+    ctx.font = `600 ${titleFont}px Poppins, sans-serif`;
+    ctx.fillText("Variasi ukuran", titlePos.x, titlePos.y);
+
+    // Value: "S, M, L, XL, XXL"
+    ctx.font = `300 ${valueFont}px Poppins, sans-serif`;
+    ctx.fillText(state.sizeVariant, valuePos.x, valuePos.y);
+  }
+
 
   // ==============================
   // 4. TEMPLATE
@@ -313,6 +352,13 @@ document.getElementById("productInput").addEventListener("change", (e) => {
   };
   reader.readAsDataURL(file);
 });
+
+// Size variant input
+document.getElementById("sizeVariant").addEventListener("input", (e) => {
+  state.sizeVariant = e.target.value;
+  draw();
+});
+
 
 // Logo dropdown
 document.getElementById("logoSelect").addEventListener("change", (e) => {
