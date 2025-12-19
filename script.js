@@ -94,8 +94,8 @@ const SIZE_CONFIG = {
       originalPrice: { x: 889, y: 1595 },
       discountPrice: { x: 889, y: 1677 },
 
-      sizeTitle: { x: 200, y: 1500 },
-      sizeValue: { x: 200, y: 1545 }
+      sizeTitle: { x: 820, y: 1479 },
+      sizeValue: { x: 820, y: 1520 }
 
     }
   }
@@ -208,37 +208,6 @@ function draw() {
   }
 
   // ==============================
-  // VARIASI UKURAN (CENTER ALIGN)
-  // ==============================
-  if (state.sizeVariant) {
-    const positions = getPositions();
-
-    const titlePos = scalePos(positions.sizeTitle);
-    const valuePos = scalePos(positions.sizeValue);
-
-    const scaled = scalePos({ x: 0, y: 0 });
-
-    // Base font sizes (sesuai permintaan)
-    const baseTitle = 24; // semibold
-    const baseValue = 36; // light
-
-    const titleFont = Math.max(12, Math.round(baseTitle * Math.min(scaled.sx, scaled.sy)));
-    const valueFont = Math.max(14, Math.round(baseValue * Math.min(scaled.sx, scaled.sy)));
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
-
-    // Title: "Variasi ukuran"
-    ctx.font = `600 ${titleFont}px Poppins, sans-serif`;
-    ctx.fillText("Variasi ukuran", titlePos.x, titlePos.y);
-
-    // Value: "S, M, L, XL, XXL"
-    ctx.font = `300 ${valueFont}px Poppins, sans-serif`;
-    ctx.fillText(state.sizeVariant, valuePos.x, valuePos.y);
-  }
-
-
-  // ==============================
   // 4. TEMPLATE
   // ==============================
   if (state.template) {
@@ -330,6 +299,36 @@ function draw() {
     const dp = scalePos(getPositions().discountPrice);
     ctx.fillText(formatIDR(state.discountPrice), dp.x, dp.y);
   }
+  
+  // ==============================
+  // VARIASI UKURAN (CENTER ALIGN)
+  // ==============================
+  if (state.sizeVariant) {
+    const positions = getPositions();
+
+    const titlePos = scalePos(positions.sizeTitle);
+    const valuePos = scalePos(positions.sizeValue);
+
+    const scaled = scalePos({ x: 0, y: 0 });
+
+    // Base font sizes (sesuai permintaan)
+    const baseTitle = 24; // semibold
+    const baseValue = 36; // light
+
+    const titleFont = Math.max(12, Math.round(baseTitle * Math.min(scaled.sx, scaled.sy)));
+    const valueFont = Math.max(14, Math.round(baseValue * Math.min(scaled.sx, scaled.sy)));
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+
+    // Title: "Variasi ukuran"
+    ctx.font = `600 ${titleFont}px Poppins, sans-serif`;
+    ctx.fillText("Variasi ukuran", titlePos.x, titlePos.y);
+
+    // Value: "S, M, L, XL, XXL"
+    ctx.font = `300 ${valueFont}px Poppins, sans-serif`;
+    ctx.fillText(state.sizeVariant, valuePos.x, valuePos.y);
+  }
 }
 
 // ==============================
@@ -355,10 +354,16 @@ document.getElementById("productInput").addEventListener("change", (e) => {
 
 // Size variant input
 document.getElementById("sizeVariant").addEventListener("input", (e) => {
-  state.sizeVariant = e.target.value;
+  const upper = e.target.value.toUpperCase();
+
+  // update input field supaya kelihatan langsung uppercase
+  e.target.value = upper;
+
+  // simpan ke state
+  state.sizeVariant = upper;
+
   draw();
 });
-
 
 // Logo dropdown
 document.getElementById("logoSelect").addEventListener("change", (e) => {
