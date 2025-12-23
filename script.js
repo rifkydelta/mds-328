@@ -75,12 +75,12 @@ const SIZE_CONFIG = {
     // positions are in pixels for this size
     positions: {
       product: { x: 0, y: 0, w: 1080, h: 1350 },
-      logo: { x: 600, y: 1090, w: 140, h: 140 },
-      originalPrice: { x: 889, y: 1125 },
-      discountPrice: { x: 889, y: 1207 },
+      logo: { x: 570, y: 1090, w: 140, h: 140 },
+      originalPrice: { x: 874, y: 1125 },
+      discountPrice: { x: 874, y: 1210 },
 
-      sizeTitle: { x: 820, y: 1009 },
-      sizeValue: { x: 820, y: 1050 }
+      sizeTitle: { x: 803, y: 1009 },
+      sizeValue: { x: 803, y: 1050 }
     }
   },
   "9:16": {
@@ -90,12 +90,12 @@ const SIZE_CONFIG = {
     // defaults scaled from 4:5 to 9:16 (you can tweak these values)
     positions: {
       product: { x: 0, y: 0, w: 1080, h: 1920 },
-      logo: { x: 600, y: 1560, w: 140, h: 140 },
-      originalPrice: { x: 889, y: 1595 },
-      discountPrice: { x: 889, y: 1677 },
+      logo: { x: 570, y: 1560, w: 140, h: 140 },
+      originalPrice: { x: 874, y: 1595 },
+      discountPrice: { x: 874, y: 1677 },
 
-      sizeTitle: { x: 820, y: 1479 },
-      sizeValue: { x: 820, y: 1520 }
+      sizeTitle: { x: 803, y: 1479 },
+      sizeValue: { x: 803, y: 1520 }
 
     }
   }
@@ -293,7 +293,7 @@ function draw() {
   // ==============================
   if (state.discountPrice) {
     const scaled = scalePos({ x: 0, y: 0 });
-    const baseBig = 58;
+    const baseBig = 66;
     const bigFont = Math.max(14, Math.round(baseBig * Math.min(scaled.sx, scaled.sy)));
     ctx.font = `700 ${bigFont}px Poppins, sans-serif`;
     ctx.fillStyle = "#171717";
@@ -477,9 +477,11 @@ function formatNumberInput(inputEl) {
   // Ambil hanya angka
   let raw = inputEl.value.replace(/\D/g, "");
 
-  // BATAS MAKS 7 DIGIT
-  if (raw.length > 7) {
-    raw = raw.slice(0, 7);
+  // BATAS MAKS DIGIT INPUT
+  let longInput = 7;
+
+  if (raw.length > longInput) {
+    raw = raw.slice(0, longInput);
   }
 
   if (!raw) {
