@@ -228,13 +228,6 @@ function draw() {
   }
 
   // ==============================
-  // 4. TEMPLATE
-  // ==============================
-  if (state.template) {
-    ctx.drawImage(state.template, 0, 0, canvasWidth, canvasHeight);
-  }
-
-  // ==============================
   // BORDER PEMBATAS KOLASE (PUTIH)
   // ==============================
   if (state.productImages && state.productImages.length) {
@@ -255,6 +248,13 @@ function draw() {
       ctx.fillRect(sepX, p.y, borderW, p.h); // vertical
       ctx.fillRect(p.x, sepY, p.w, borderW); // horizontal
     }
+  }
+  
+  // ==============================
+  // 4. TEMPLATE
+  // ==============================
+  if (state.template) {
+    ctx.drawImage(state.template, 0, 0, canvasWidth, canvasHeight);
   }
 
   // ==============================
