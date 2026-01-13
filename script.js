@@ -136,7 +136,7 @@ function scalePos(pos) {
 // ==============================
 const state = {
   template: null,
-  productImage: null,
+  productImages: [],
   logoImage: null,
   originalPrice: "",
   originalPriceSpecial: false,
@@ -198,14 +198,33 @@ function drawImageCover(ctx, img, x, y, w, h) {
 // ==============================
 function draw() {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  const positions = getPositions();
+  const p = scalePos(positions.product);
 
   // ==============================
   // 5. PRODUCT IMAGE (PALING BAWAH)
   // ==============================
-  if (state.productImage) {
-    const positions = getPositions();
-    const p = scalePos(positions.product);
-    drawImageCover(ctx, state.productImage, p.x, p.y, p.w, p.h);
+  if (state.productImages && state.productImages.length) {
+    const imgs = state.productImages;
+    if (imgs.length === 1) {
+      drawImageCover(ctx, imgs[0], p.x, p.y, p.w, p.h);
+    } else if (imgs.length === 2) {
+      // Two images: top and bottom (stacked)
+      const hHalf = Math.round(p.h / 2);
+      drawImageCover(ctx, imgs[0], p.x, p.y, p.w, hHalf);
+      drawImageCover(ctx, imgs[1], p.x, p.y + hHalf, p.w, p.h - hHalf);
+    } else if (imgs.length >= 4) {
+      // Four images: 2x2 grid
+      const wHalf = Math.round(p.w / 2);
+      const hHalf = Math.round(p.h / 2);
+      drawImageCover(ctx, imgs[0], p.x, p.y, wHalf, hHalf);
+      drawImageCover(ctx, imgs[1], p.x + wHalf, p.y, p.w - wHalf, hHalf);
+      drawImageCover(ctx, imgs[2], p.x, p.y + hHalf, wHalf, p.h - hHalf);
+      drawImageCover(ctx, imgs[3], p.x + wHalf, p.y + hHalf, p.w - wHalf, p.h - hHalf);
+    } else {
+      // fallback: draw first image full
+      drawImageCover(ctx, imgs[0], p.x, p.y, p.w, p.h);
+    }
   }
 
   // ==============================
@@ -213,6 +232,29 @@ function draw() {
   // ==============================
   if (state.template) {
     ctx.drawImage(state.template, 0, 0, canvasWidth, canvasHeight);
+  }
+
+  // ==============================
+  // BORDER PEMBATAS KOLASE (PUTIH)
+  // ==============================
+  if (state.productImages && state.productImages.length) {
+    const imgs = state.productImages;
+    const scaled = scalePos({ x: 0, y: 0 });
+    const borderW = Math.max(4, Math.round(8 * Math.min(scaled.sx, scaled.sy)));
+    ctx.fillStyle = "#fff";
+
+    if (imgs.length === 2) {
+      const hHalf = Math.round(p.h / 2);
+      const sepY = p.y + hHalf - Math.round(borderW / 2);
+      ctx.fillRect(p.x, sepY, p.w, borderW);
+    } else if (imgs.length >= 4) {
+      const wHalf = Math.round(p.w / 2);
+      const hHalf = Math.round(p.h / 2);
+      const sepX = p.x + wHalf - Math.round(borderW / 2);
+      const sepY = p.y + hHalf - Math.round(borderW / 2);
+      ctx.fillRect(sepX, p.y, borderW, p.h); // vertical
+      ctx.fillRect(p.x, sepY, p.w, borderW); // horizontal
+    }
   }
 
   // ==============================
@@ -336,22 +378,47 @@ function draw() {
 // INPUT HANDLERS
 // ==============================
 
-// Upload product image
-document.getElementById("productInput").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+// Upload product image (support 1, 2, or 4 files for collage)
+const productInputEl = document.getElementById("productInput");
+if (productInputEl) {
+  // ensure input allows multiple selection (if HTML doesn't already set it)
+  productInputEl.setAttribute('multiple', '');
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      state.productImage = img;
+  productInputEl.addEventListener("change", (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    // validation: must be 1, 2, or 4 files and max 4
+    if (files.length > 4 || !(files.length === 1 || files.length === 2 || files.length === 4)) {
+      window.alert("Harap upload 1, 2, atau 4 foto saja (maksimal 4). Silakan ulangi.");
+      e.target.value = ""; // reset input
+      state.productImages = [];
       draw();
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(file);
-});
+      return;
+    }
+
+    // limit to 4 images (files length is already validated)
+    const filesToLoad = files.slice(0, 4);
+    state.productImages = [];
+
+    let loaded = 0;
+    filesToLoad.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          state.productImages[idx] = img;
+          loaded++;
+          if (loaded === filesToLoad.length) {
+            draw();
+          }
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
 
 // Size variant input
 document.getElementById("sizeVariant").addEventListener("input", (e) => {
