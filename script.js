@@ -77,7 +77,7 @@ const SIZE_CONFIG = {
       product: { x: 0, y: 0, w: 1080, h: 1350 },
       logo: { x: 570, y: 1090, w: 140, h: 140 },
       originalPrice: { x: 874, y: 1125 },
-      discountPrice: { x: 874, y: 1210 },
+      discountPrice: { x: 874, y: 1211 },
 
       sizeTitle: { x: 803, y: 1009 },
       sizeValue: { x: 803, y: 1050 }
@@ -90,12 +90,12 @@ const SIZE_CONFIG = {
     // defaults scaled from 4:5 to 9:16 (you can tweak these values)
     positions: {
       product: { x: 0, y: 0, w: 1080, h: 1920 },
-      logo: { x: 570, y: 1560, w: 140, h: 140 },
-      originalPrice: { x: 874, y: 1595 },
-      discountPrice: { x: 874, y: 1677 },
+      logo: { x: 570, y: 1658, w: 140, h: 140 },
+      originalPrice: { x: 874, y: 1693 },
+      discountPrice: { x: 874, y: 1779 },
 
-      sizeTitle: { x: 803, y: 1479 },
-      sizeValue: { x: 803, y: 1520 }
+      sizeTitle: { x: 803, y: 1577 },
+      sizeValue: { x: 803, y: 1618 }
 
     }
   }
@@ -249,7 +249,7 @@ function draw() {
       ctx.fillRect(p.x, sepY, p.w, borderW); // horizontal
     }
   }
-  
+
   // ==============================
   // 4. TEMPLATE
   // ==============================
@@ -433,22 +433,29 @@ document.getElementById("sizeVariant").addEventListener("input", (e) => {
   draw();
 });
 
-// Logo dropdown
-document.getElementById("logoSelect").addEventListener("change", (e) => {
-  const value = e.target.value;
-  if (!value) {
-    state.logoImage = null;
-    draw();
-    return;
-  }
+// Logo input (with datalist)
+const logoInputEl = document.getElementById("logoSelect");
+if (logoInputEl) {
+  logoInputEl.addEventListener("input", (e) => {
+    const val = String(e.target.value || "").trim();
+    if (!val) {
+      state.logoImage = null;
+      draw();
+      return;
+    }
 
-  const img = new Image();
-  img.onload = () => {
-    state.logoImage = img;
-    draw();
-  };
-  img.src = value;
-});
+    // map label -> path
+    const path = window.logoMap && window.logoMap[val];
+    if (!path) return; // user typed free text that doesn't match
+
+    const img = new Image();
+    img.onload = () => {
+      state.logoImage = img;
+      draw();
+    };
+    img.src = path;
+  });
+}
 
 // Price inputs
 const originalPriceInput = document.getElementById("originalPrice");
@@ -512,8 +519,8 @@ function download(type) {
 
   const logoSelect = document.getElementById("logoSelect");
   let brand = "brand";
-  if (logoSelect && logoSelect.selectedOptions && logoSelect.selectedOptions.length) {
-    brand = logoSelect.selectedOptions[0].textContent || brand;
+  if (logoSelect && logoSelect.value) {
+    brand = logoSelect.value;
   }
 
   const orig = formatIDR(state.originalPrice) || "";
@@ -566,22 +573,39 @@ function formatNumberInput(inputEl) {
 fetch("assets/logos.json")
   .then(res => res.json())
   .then(logos => {
-    const select = document.getElementById("logoSelect");
-
-    logos.forEach(filename => {
-      const option = document.createElement("option");
-      option.value = `assets/logos/${filename}`;
-      option.textContent = filename
-        .replace(/\.[^/.]+$/, "")   // hapus .png
-        .replace(/[-_]/g, " ")      // ganti - _
-        .replace(/\b\w/g, l => l.toUpperCase()); // kapital
-
-      select.appendChild(option);
-    });
+    // store master list and populate select
+    window.logosList = logos;
+    populateLogoOptions(logos);
   })
   .catch(err => {
     console.error("Failed to load logos.json", err);
   });
+
+function populateLogoOptions(list) {
+  // Populate datalist `logoList` and build a label->path map
+  const dataList = document.getElementById("logoList");
+  const input = document.getElementById("logoSelect");
+  if (!dataList || !input) return;
+
+  // clear existing
+  dataList.innerHTML = "";
+  window.logoMap = {};
+
+  list.forEach(filename => {
+    const label = filename
+      .replace(/\.[^/.]+$/, "")   // remove extension
+      .replace(/[-_]/g, " ")      // replace - _ with space
+      .replace(/\b\w/g, l => l.toUpperCase()); // capitalize
+
+    const option = document.createElement("option");
+    option.value = label;
+    dataList.appendChild(option);
+
+    window.logoMap[label] = `assets/logos/${filename}`;
+  });
+}
+
+// (datalist-based searching — built-in behavior) no extra search handler needed
 
 function loadTemplateForSize(sizeKey) {
   const cfg = SIZE_CONFIG[sizeKey];
